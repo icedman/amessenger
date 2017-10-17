@@ -1,0 +1,22 @@
+{
+  "name": "amessenger",
+  "description": "Another redis-socket.io messenger",
+  "main": "index.js",
+  "author": "icedman",
+  "moduleType": [
+    "node"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "public/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "socket.io-client": "^2.0.3",
+    "vue": "^2.5.2"
+  }
+}

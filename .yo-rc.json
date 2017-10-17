@@ -1,0 +1,14 @@
+{
+  "generator-kraken": {
+    "taskModule": "grunt",
+    "lintModule": "eslint",
+    "description": "Another redis-socket.io messenger",
+    "author": "icedman",
+    "templateModule": "makara",
+    "i18n": false,
+    "componentPackager": "bower",
+    "cssModule": false,
+    "jsModule": false,
+    "useJson": null
+  }
+}
