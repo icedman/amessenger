@@ -26,8 +26,18 @@ io.on('connection', function(socket) {
 
         console.log('send received..' + message);
 
-        // echo!
-        io.emit('messages', 'echo ' + message);
+        if (message.to !== undefined && message.to !== '') {
+            io.to(message.to).emit('messages', 'echo ' + message.message);
+        } else {
+            io.emit('messages', 'echo ' + message.message);
+        }
+        
+    });
+
+    socket.on('join', function(username) {
+
+        socket.join(username);
+        io.in(username).emit('messages', 'welcome ' + username);
         
     });
 });
