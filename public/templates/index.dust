@@ -1,22 +1,24 @@
 {>"layouts/master" /}
 
-{<body}
-    <h1>Hello, {name}</h1>
-{/body}
-
-
+<style>
+.container {
+    padding: 20px;
+}
+</style>
 <div id="app" class="container">
 
 <div class="input-group">
-    <input class="form-control" type="text" class="form-control" v-model="username" v-on:keyup.enter="join" placeholder="Username">
+    <input v-focus="true" class="form-control" type="text" class="form-control" v-model="username" v-on:keyup.enter="join" placeholder="Username">
     <span class="input-group-btn">
         <button class="btn btn-default" type="button" v-on:click="join">Join</button>
     </span>
 </div>
 
+    <div class="container">
     <ul>
-        <li v-for="message in messages">{{ message }}</li>
+        <li v-for="message in messages">{{ message.from }} : {{ message.message }}</li>
     </ul>
+    </div>
 
 <div class="field-group">
 <input class="form-control" type="text" class="form-control" v-model="to" placeholder="To:">
@@ -24,7 +26,7 @@
 </div>
 
 <div class="input-group">
-    <input class="form-control" type="text" class="form-control" v-focus="true" v-model="message" v-on:keyup.enter="send" placeholder="Message text...">
+    <input class="form-control" type="text" class="form-control" v-model="message" v-on:keyup.enter="send" placeholder="Message text...">
     <span class="input-group-btn">
         <button class="btn btn-default" type="button" v-on:click="send">Send</button>
     </span>
@@ -64,22 +66,6 @@ new Vue({
     mounted: function() {
         socket.on('messages', function(message) {
             this.messages.push(message);
-        }.bind(this));
-
-        socket.on('member_add', function(member) {
-            Vue.set(this.members, member.socket, member);
-        }.bind(this));
-
-        socket.on('member_delete', function(socket_id) {
-            Vue.delete(this.members, socket_id);
-        }.bind(this));
-
-        socket.on('message_history', function(messages) {
-            this.messages = messages;
-        }.bind(this));
-
-        socket.on('member_history', function(members) {
-            this.members = members;
         }.bind(this));
     }
 });
