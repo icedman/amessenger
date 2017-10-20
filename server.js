@@ -10,7 +10,6 @@ var sub = redis.createClient(), pub = redis.createClient();
 var channel_history_max = 10;
 
 var room = 'global';
-var room_messages = 'message_' + room;
 var server;
 
 /*
@@ -28,7 +27,7 @@ sub.on('message', function (channel, message) {
     var msg = JSON.parse(message);
     var date = moment.now();
     
-    pub.zadd(room_messages, date, message);
+    pub.zadd('message_' + room, date, message);
 
     if ((msg.to || '').length > 0) {
         io.in(channel).emit('messages', msg);
@@ -59,7 +58,6 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
         sub.unsubscribe(_username);
-        io.emit('messages', {message:_username + ' has left'});
         // pub.publish(room, JSON.stringify( { message: 'disconnected ..' + _username } ));
     });
 
@@ -69,7 +67,7 @@ io.on('connection', function(socket) {
         socket.join(_username);
         sub.subscribe(_username);
 
-        var get_messages = pub.zrange(room_messages, -1 * channel_history_max, -1)
+        var get_messages = pub.zrange('message_' + room, -1 * channel_history_max, -1)
         .then(function(result) {
             return result.map(function(x) {
                 return JSON.parse(x);
