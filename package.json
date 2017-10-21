@@ -15,7 +15,7 @@
     "construx-dustjs": "^1.1.0",
     "eslint": "^1.10.3",
     "express": "^4.12.2",
-    "ioredis": "^2.4.3",
+    "ioredis": "^2.5.0",
     "kraken-js": "^2.0.0",
     "makara": "^2.0.3",
     "moment": "^2.19.1",
