@@ -7,12 +7,14 @@
 </style>
 <div id="app" class="container">
 
-<div class="input-group">
+<div class="input-group" v-if="logged!==true">
     <input v-focus="true" class="form-control" type="text" class="form-control" v-model="username" v-on:keyup.enter="join" placeholder="Username">
     <span class="input-group-btn">
         <button class="btn btn-default" type="button" v-on:click="join">Join</button>
     </span>
 </div>
+
+<div v-if="logged===true">
 
     <div class="container">
     <ul>
@@ -34,6 +36,8 @@
 
 </div>
 
+</div>
+
 <script>
 /* global io: true */
 /* global Vue: true */
@@ -44,6 +48,7 @@ new Vue({
     el: '#app',
 
     data: {
+        logged: false,
         username: '',
         to: '',
         message: '',
@@ -54,6 +59,7 @@ new Vue({
         join: function() {
             socket.emit('join', this.username);
             console.log('joining as ' + this.username);
+            this.logged = true;
             this.message = '';
         },
         send: function() {

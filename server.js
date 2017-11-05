@@ -19,11 +19,10 @@ server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
-sub.on('subscribe', function (channel, count) {
-    console.log(channel + ': ' + count);
-});
-
 sub.on('message', function (channel, message) {
+
+    console.log(channel);
+
     var msg = JSON.parse(message);
     var date = moment.now();
     
@@ -36,7 +35,13 @@ sub.on('message', function (channel, message) {
     }
 });
 
-sub.subscribe(room);
+sub.subscribe(room, function(err, count) {
+    if (err) {
+        console.log(err);
+        return;
+    }
+    console.log(room + ': ' + count);
+});
 
 server.listen(process.env.PORT || 8000);
 server.on('listening', function () {
@@ -49,8 +54,12 @@ io.on('connection', function(socket) {
     
     console.log('connected...');
     socket.on('send', function(message) {
+
+        console.log('send.. ' + _username);
+        
         if ((message.to || '').length > 0) {
             pub.publish(message.to, JSON.stringify( { from: _username, to: message.to, message: message.message } ));
+            // pub.publish(_username, JSON.stringify( { from: _username, to: message.to, message: message.message } ));
         } else {
             pub.publish(room, JSON.stringify( { from: _username, to: message.to, message: message.message } ));
         }
@@ -65,7 +74,14 @@ io.on('connection', function(socket) {
 
         _username = username;
         socket.join(_username);
-        sub.subscribe(_username);
+
+        sub.subscribe(_username, function(err, count) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log(_username + ': ' + count);
+        });
 
         var get_messages = pub.zrange('message_' + room, -1 * channel_history_max, -1)
         .then(function(result) {
@@ -83,9 +99,10 @@ io.on('connection', function(socket) {
                 }
             });
 
-            io.emit('messages', {message:_username + ' has joined'});
-            io.in(_username).emit('messages', {message:'Welcome, ' + _username});
+            // io.emit('messages', {message:_username + ' has joined'});
+            pub.publish(room, JSON.stringify( {message:_username + ' has joined'} ));
 
+            io.in(_username).emit('messages', {message:'Welcome, ' + _username});
             // pub.publish(_username, JSON.stringify({ to:_username, message:'Welcome, ' + _username}));
         })
         .catch(function(e) {
