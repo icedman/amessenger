@@ -53,8 +53,8 @@ new Vue({
 
     data: {
         logged: false,
-        username: '',
-        to: '',
+        username: 'marvin',
+        to: 'poker',
         message: '',
         messages: [],
         members: {}
@@ -62,8 +62,10 @@ new Vue({
     methods: {
         login: function() {
             this.logged = true;
-            this.message = '';
+            this.message = '/join poker';
             this.messages = [];
+
+            this.send();
         },
         send: function() {
             socket.emit('message', { from:this.username, to:this.to, message:this.message } );
