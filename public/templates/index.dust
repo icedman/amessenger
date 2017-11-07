@@ -4,6 +4,9 @@
 .container {
     padding: 20px;
 }
+.btn.btn-default {
+    margin:4px;
+}
 </style>
 <div id="app" class="container">
 
@@ -38,6 +41,14 @@
         </span>
     </div>
 
+    <div class="input-group">
+    <button class="btn btn-default" type="button" v-on:click="command('/info')">Table</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/ping')">Ping</button>
+    <button class="btn btn-default" type="button" v-on:click="sit">Sit</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/ready 1')">Ready</button>
+    <button class="btn btn-default" type="button" v-on:click="clear">Clear</button>
+    </div>
+
 </div>
 
 </div>
@@ -52,6 +63,7 @@ new Vue({
     el: '#app',
 
     data: {
+        seat: 0,
         logged: false,
         username: 'marvin',
         to: 'poker',
@@ -71,6 +83,18 @@ new Vue({
             socket.emit('message', { from:this.username, to:this.to, message:this.message } );
             console.log('sending ' + this.message);
             this.message = '';
+        },
+        sit: function() {
+            this.seat = (this.seat + 1) % 10;
+            this.message = '/sit ' + this.seat;
+            this.send();
+        },
+        command: function(cmd) {
+            this.message = cmd;
+            this.send();
+        },
+        clear: function() {
+            this.messages = [];
         }
     },
 
