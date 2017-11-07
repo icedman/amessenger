@@ -49,6 +49,13 @@
     <button class="btn btn-default" type="button" v-on:click="clear">Clear</button>
     </div>
 
+    <div class="controls input-group">
+    <button class="btn btn-default" type="button" v-on:click="command('/check')">Check</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/call')">Call</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/raise')">Raise</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/fold')">Fold</button>
+    </div>
+
 </div>
 
 </div>
