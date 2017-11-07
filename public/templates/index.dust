@@ -4,7 +4,7 @@
 .container {
     padding: 20px;
 }
-.btn.btn-default {
+.controls .btn.btn-default {
     margin:4px;
 }
 </style>
@@ -41,7 +41,7 @@
         </span>
     </div>
 
-    <div class="input-group">
+    <div class="controls input-group">
     <button class="btn btn-default" type="button" v-on:click="command('/info')">Table</button>
     <button class="btn btn-default" type="button" v-on:click="command('/ping')">Ping</button>
     <button class="btn btn-default" type="button" v-on:click="sit">Sit</button>
@@ -56,16 +56,26 @@
 <script>
 /* global io: true */
 /* global Vue: true */
+/* global VueRouter: true */
 
 var socket = io();
 
+const router = new VueRouter({
+    mode: 'history',
+    routes: [{
+        path: '*'
+    }]
+});
+
 new Vue({
+    router,
+
     el: '#app',
 
     data: {
         seat: 0,
         logged: false,
-        username: 'marvin',
+        username: '',
         to: 'poker',
         message: '',
         messages: [],
@@ -76,7 +86,6 @@ new Vue({
             this.logged = true;
             this.message = '/join poker';
             this.messages = [];
-
             this.send();
         },
         send: function() {
@@ -99,9 +108,12 @@ new Vue({
     },
 
     mounted: function() {
+
+        this.username = this.$route.query.user || '';
+
         socket.on('message', function(message) {
             if (message.history != undefined) {
-                message.history.map( m => { 
+                message.history.map( m => {
                     this.messages.push(m);
                 });
             }

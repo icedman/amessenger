@@ -1,6 +1,7 @@
 'use strict';
 
 var PokerGame = require('../../pokerworld/PokerGame').PokerGame;
+
 class Poker {
 
     constructor() {
@@ -16,6 +17,7 @@ class Poker {
         return new Promise( function(resolve) {
             var stateKey = 'state::' + message.channel;
             var client = pubsub.client();
+
             client.get(stateKey, function(err, result) {
 
                 let state;
@@ -26,29 +28,22 @@ class Poker {
                     self.game.createGame();
                 }
 
-                self.game.ping(message);
-                self.game.dump(true);
+                message.reply = self.game.ping(message);
+                // self.game.dump(true);
 
-                // console.log(JSON.stringify(self.game.state, null, 4));
-                // console.log(message.command);
-                // console.log('state: ' + JSON.stringify(self.game.state));
+                console.log(message.reply);
 
                 // save updated state
                 client.set(stateKey, JSON.stringify(self.game.state));
+                client.expire(stateKey, 60*5); // expire within 5 minutes
 
                 // allow dispatcher.. or self-publish
-                if (message.ping != undefined) {
+                if (self.game.state.ping > 0) {
+                    console.log('ping requested');
                     setTimeout( function() {
-                        console.log('ping requested');
+                        console.log('do ping');
                         self.game.ping( { command: [ 0, 'ping' ]});
-                    }, message.ping);
-                }
-
-                // frame reply
-                message.from = 'poker';
-                message.message = self.game.state.state;
-                if (message.result != undefined) {
-                    message.message += ':' + message.result;
+                    }, self.game.state.ping);
                 }
 
                 resolve(message);
