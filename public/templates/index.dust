@@ -42,18 +42,26 @@
     </div>
 
     <div class="controls input-group">
-    <button class="btn btn-default" type="button" v-on:click="command('/info')">Table</button>
-    <button class="btn btn-default" type="button" v-on:click="command('/ping')">Ping</button>
-    <button class="btn btn-default" type="button" v-on:click="sit">Sit</button>
-    <button class="btn btn-default" type="button" v-on:click="command('/ready 1')">Ready</button>
+    
+    <button class="btn btn-default" type="button" v-on:click="command('/info')">Ping</button>
+    <!-- <button class="btn btn-default" type="button" v-on:click="command('/ping')">Ping</button> -->
     <button class="btn btn-default" type="button" v-on:click="clear">Clear</button>
+
+    <button class="btn btn-default" type="button" v-on:click="sit" 
+        v-if="actions.indexOf('sit')!=-1">Sit</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/ready 1')"
+        v-if="actions.indexOf('ready')!=-1">Ready</button>
     </div>
 
     <div class="controls input-group">
-    <button class="btn btn-default" type="button" v-on:click="command('/check')">Check</button>
-    <button class="btn btn-default" type="button" v-on:click="command('/call')">Call</button>
-    <button class="btn btn-default" type="button" v-on:click="command('/raise')">Raise</button>
-    <button class="btn btn-default" type="button" v-on:click="command('/fold')">Fold</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/check')"
+        v-if="actions.indexOf('check')!=-1">Check</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/call')"
+        v-if="actions.indexOf('call')!=-1">Call</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/raise')"
+        v-if="actions.indexOf('raise')!=-1">Raise</button>
+    <button class="btn btn-default" type="button" v-on:click="command('/fold')"
+        v-if="actions.indexOf('fold')!=-1">Fold</button>
     </div>
 
 </div>
@@ -86,8 +94,9 @@ new Vue({
         to: 'poker',
         message: '',
         messages: [],
-        members: {}
+        actions: []
     },
+
     methods: {
         login: function() {
             this.logged = true;
@@ -119,13 +128,22 @@ new Vue({
         this.username = this.$route.query.user || '';
 
         socket.on('message', function(message) {
+
+            if (message.message.actions !== undefined) {
+                this.actions = message.message.actions;
+            }
+
             if (message.history != undefined) {
                 message.history.map( m => {
                     this.messages.push(m);
                 });
             }
+
             this.messages.push(message);
+            // last ten messages
+            this.messages = this.messages.slice(-10);
         }.bind(this));
+
     }
 });
 

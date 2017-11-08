@@ -10,6 +10,8 @@ class Poker {
         this.game = new PokerGame();
         this.pingRequests = [];
 
+        /*
+        // game heartbeat
         setInterval( ()=> {
             
             // console.log('.' + this.game._state + this.pingRequests.length);
@@ -41,6 +43,7 @@ class Poker {
             
 
         }, 2000);
+        */
     }
 
     _pingRequest(message, pubsub, timeout) {
@@ -96,6 +99,7 @@ class Poker {
                 client.set(stateKey, JSON.stringify(game.state));
                 client.expire(stateKey, 60*5); // expire within 5 minutes
 
+                /*
                 if (game.state.ping > 0) {
                     self._pingRequest({ 
                         from:'poker',
@@ -104,6 +108,7 @@ class Poker {
                         command: [ 0, 'ping' ]
                     }, pubsub, game.state.ping);
                 }
+                */
 
                 if (message.internal != undefined) {
                     delete message.to;
